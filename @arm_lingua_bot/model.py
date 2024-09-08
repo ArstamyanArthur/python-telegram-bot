@@ -13,12 +13,9 @@ client = anthropic.Anthropic(
 
 model = "claude-3-5-sonnet-20240620"
 
-def claude(text, trans=False, lang=None, other=False):
+def claude(text, trans=False, lang=None):
     if lang:
-        if other:
-            system = 'Թարգմանիր ' + lang + ' այլ կերպ և հետ ուղարկիր առանց այլ բան ասելու'
-        else:
-            system = 'Թարգմանիր ' + lang + ' և հետ ուղարկիր առանց այլ բան ասելու'
+        system = 'Թարգմանիր ' + lang + ' և հետ ուղարկիր առանց այլ բան ասելու'
     elif trans:
         system = 'Թարգմանիր հայերեն և հետ ուղարկիր առանց այլ բան ասելու'
     else:
