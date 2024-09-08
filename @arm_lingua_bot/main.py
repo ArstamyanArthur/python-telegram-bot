@@ -33,7 +33,7 @@ for i in range(int(os.getenv('n'))-1):
 Token: Final = os.getenv(key)
 BOT_USERNAME: Final = '@arm_lingua_bot'
 
-#               Using KeyboardButtons instead of Inlinekeyboard buttons
+#  keyboards
 finish = ReplyKeyboardMarkup([['Ավարտել']])  # one_time_keyboard=True
 help_keyboard_1 = InlineKeyboardMarkup([[InlineKeyboardButton('<', callback_data='1000'), InlineKeyboardButton('1/2', callback_data='1000'), InlineKeyboardButton('>', callback_data='200')]])
 help_keyboard_2 = InlineKeyboardMarkup([[InlineKeyboardButton('<', callback_data='100'), InlineKeyboardButton('2/2', callback_data='1000'), InlineKeyboardButton('>', callback_data='1000')]])
@@ -209,22 +209,6 @@ async def trans_into(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
 
-# handling inline queries
-async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.inline_query.query
-    print(query)
-    if not query:  # empty query should not be handled
-        return
-    # response = punctuate(query)
-    # results = [
-    #     InlineQueryResultArticle(
-    #         id=str(uuid4()),
-    #         title="Կետադրված տարբերակը",
-    #         input_message_content=InputTextMessageContent(response),
-    #         description=response
-    #     )]
-    # await update.inline_query.answer(results)
-
 async def done(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Display the gathered info and end the conversation."""
     await update.message.reply_text("Շնորհակալություն \nԱշխատանքը վերսկսելու համար \nսեղմեք /start հրամանը։", reply_markup=ReplyKeyboardRemove())
@@ -270,131 +254,4 @@ if __name__ == '__main__':
     # Polls the bot
     print('Polling...')
     app.run_polling(poll_interval=3)
-
-# Trying to do all buttons inline with conversation handler
-'''
-# commands
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    keyboard = [
-        [InlineKeyboardButton("Ուղղել տեքստը", callback_data="1")],
-        [InlineKeyboardButton("Թարգմանել հայերենից", callback_data="2")],
-        [InlineKeyboardButton("Թարգմանել հայերեն", callback_data="3")]
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_text('Բարև ձեզ, ընտրեք ներքևում բերված տարբերակներից մեկը', reply_markup = reply_markup)
-
-
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Տեքստն ուղարկեք առանց որևէ հավելյալ գրառման։ Նախադասությունները պետք է վերջակետով '
-                                    'առանձնացված լինեն։')
-
-async def correct_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.answer()
-    await query.edit_message_text(text='Ուղարկեք տեքստը։')
-    return 0
-
-async def correct_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print('shit')
-    text = update.message.text
-    print(update)
-    print(f'User: {update.message.chat.first_name} {update.message.chat.last_name}\nUsername: @{update.message.chat.username}\nid: {update.message.chat.id}\nMessage_type:  {message_type}\nInput: "{text}"')
-    await update.message.reply_text(correct(text))
-
-async def trans_from(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    keyboard = [
-        [InlineKeyboardButton("Անգլերեն", callback_data="10"), InlineKeyboardButton("Ռուսերեն", callback_data="11")],
-        [InlineKeyboardButton("Չինարեն", callback_data="12"), InlineKeyboardButton("Հնդկերեն", callback_data="13")],
-        [InlineKeyboardButton("Ֆրանսերեն", callback_data="14"), InlineKeyboardButton("Գերմաներեն", callback_data="15")],
-        [InlineKeyboardButton("Գերմաներեն", callback_data="16"), InlineKeyboardButton("Այլ", callback_data="17")]
-    ]
-
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    await query.edit_message_text(text='Ընտրեք թարգմանության լեզուն', reply_markup=reply_markup)
-    return 1
-
-async def lang(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    query.edit_message_text(context)
-
-async def type_lang(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    query.edit_message_text(context)
-
-async def trans_into(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.callback_query
-    await query.edit_message_text(text='Ուղարկեք տեքստը։')
-    return 2
-
-async def trans_into_reply(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
-    storage.append(text)
-    print(f'User: {update.message.chat.first_name} {update.message.chat.last_name}\nUsername: @{update.message.chat.username}\nid: {update.message.chat.id}\nMessage_type:  {message_type}\nInput: "{text}"')
-    await update.message.reply_text(translate_into_arm(text))
-    return -1
-
-async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    print(f'Update {update} caused error {context.error}')
-
-
-# handling inline queries
-async def inline_query(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    query = update.inline_query.query
-    print(query)
-    if not query:  # empty query should not be handled
-        return
-    response = punctuate(query)
-    results = [
-        InlineQueryResultArticle(
-            id=str(uuid4()),
-            title="Կետադրված տարբերակը",
-            input_message_content=InputTextMessageContent(response),
-            description=response
-        )]
-    await update.inline_query.answer(results)
-
-async def done(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Display the gathered info and end the conversation."""
-    user_data = context.user_data
-    if "choice" in user_data:
-        del user_data["choice"]
-
-    await update.message.reply_text("I learned these facts about you", reply_markup=ReplyKeyboardRemove())
-
-    user_data.clear()
-    return ConversationHandler.END
-
-# App
-if __name__ == '__main__':
-    print('Starting bot...')
-    app = Application.builder().token(Token).build()
-    print(app.job_queue)
-    # Commands
-    app.add_handler(CommandHandler('start', start_command))
-    app.add_handler(CommandHandler('help', help_command))
-
-    # Inline queries
-    app.add_handler(InlineQueryHandler(inline_query))
-    # Error
-    app.add_error_handler(error)
-    #conv_handlers
-    conv_handler = ConversationHandler(
-        entry_points=[CallbackQueryHandler(correct_text, pattern="^" + '1' + "$"), CallbackQueryHandler(trans_from, pattern="^" + '2' + "$"), CallbackQueryHandler(trans_into, pattern="^" + '3' + "$")],
-        states={
-            0: [MessageHandler(filters.TEXT, correct_reply)],
-            1: [CallbackQueryHandler(lang, filters.Regex("^(10|11|12|13|14|15|16)$")), CallbackQueryHandler(type_lang, '^17$')],
-            2: [MessageHandler(filters.TEXT & ~(filters.COMMAND | filters.Regex("^Done$")), trans_into_reply)],
-        },
-        fallbacks=[MessageHandler(filters.Regex("^Done$"), done)],
-        # per_message=True,
-        conversation_timeout=5
-    )
-    app.add_handler(conv_handler)
-    # Polls the bot
-    print('Polling...')
-    app.run_polling(poll_interval=3)
-
-'''
 
