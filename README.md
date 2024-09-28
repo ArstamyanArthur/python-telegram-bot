@@ -1,6 +1,6 @@
 **python-telegram-bot library** [Documentation](https://docs.python-telegram-bot.org/en/v21.5/) [Examples](https://docs.python-telegram-bot.org/en/v21.5/examples.html)
 # My bots
-**1. @arm_lingua_bot** - [Code](https://github.com/Artur-Arstamyan/python-telegram-bot/tree/main/%40arm_lingua_bot) [Link](https://t.me/arm_lingua_bot)
+**1. @arm_lingua_bot** - [Code](https://github.com/Artur-Arstamyan/python-telegram-bot/tree/main/%40arm_lingua_bot) [Link](https://t.me/arm_lingua_bot)  
 Telegram bot, that uses **Anthropic's** `claude-3-5-sonnet-20240620` model to
 - correct armenian texts
 - translate texts into armenian
